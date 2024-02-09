@@ -20,7 +20,7 @@
 
 # provisioning-agent
 
-![Version: 1.11.16-SNAPSHOT](https://img.shields.io/badge/Version-1.10.2--SNAPSHOT-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.11.16-SNAPSHOT](https://img.shields.io/badge/AppVersion-1.10.2--SNAPSHOT-informational?style=flat-square)
+![Version: 1.12.17-SNAPSHOT](https://img.shields.io/badge/Version-1.10.2--SNAPSHOT-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.12.17-SNAPSHOT](https://img.shields.io/badge/AppVersion-1.10.2--SNAPSHOT-informational?style=flat-square)
 
 A Helm chart for the Tractus-X Provisioning Agent which is a container to Bridge Agent-Enabled Connector and Relational Data Sources.
 
@@ -31,7 +31,7 @@ This chart has no prerequisites.
 ## TL;DR
 ```shell
 $ helm repo add eclipse-tractusx https://eclipse-tractusx.github.io/charts/dev
-$ helm install my-release eclipse-tractusx/provisioning-agent --version 1.11.16-SNAPSHOT
+$ helm install my-release eclipse-tractusx/provisioning-agent --version 1.12.17-SNAPSHOT
 ```
 
 ## Maintainers

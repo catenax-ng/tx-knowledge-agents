@@ -134,15 +134,15 @@ mvn package
 ```
 
 This will generate
-- a [standalone jar](target/remoting-agent-1.11.16-SNAPSHOT.jar) containing all necessary rdf4j components to build your own repository server.
-- a [pluging jar](target/original-remoting-agent-1.11.16-SNAPSHOT.jar) which maybe dropped into an rdf4j server for remoting support.
+- a [standalone jar](target/remoting-agent-1.12.17-SNAPSHOT.jar) containing all necessary rdf4j components to build your own repository server.
+- a [pluging jar](target/original-remoting-agent-1.12.17-SNAPSHOT.jar) which maybe dropped into an rdf4j server for remoting support.
 
 ### Run Locally
 
-The standalone jar](target/remoting-agent-1.11.16-SNAPSHOT.jar) contains an example application that runs a sample repository against a sample source
+The standalone jar](target/remoting-agent-1.12.17-SNAPSHOT.jar) contains an example application that runs a sample repository against a sample source
 
 ```console
-java -jar target/remoting-agent-1.11.16-SNAPSHOT.jar -Dorg.slf4j.simpleLogger.defaultLogLevel=DEBUG
+java -jar target/remoting-agent-1.12.17-SNAPSHOT.jar -Dorg.slf4j.simpleLogger.defaultLogLevel=DEBUG
 ```
 
 ### Containerizing
@@ -156,7 +156,7 @@ mvn install -Pwith-docker-image
 or invoke the following docker command after a successful package run
 
 ```console
-docker build -t tractusx/remoting-agent:1.11.16-SNAPSHOT -f src/main/docker/Dockerfile .
+docker build -t tractusx/remoting-agent:1.12.17-SNAPSHOT -f src/main/docker/Dockerfile .
 ```
 
 This will create a docker image including an extended rdf4j-server as well as an interactive rdf4j-workbench.
@@ -166,7 +166,7 @@ To run the docker image, you could invoke this command
 ```console
 docker run -p 8081:8081 \
   -v $(pwd)/src/test:/var/rdf4j/config \
-  tractusx/remoting-agent:1.11.16-SNAPSHOT
+  tractusx/remoting-agent:1.12.17-SNAPSHOT
 ````
 
 Afterwards, you should be able to access the [local SparQL endpoint](http://localhost:8081/) via
@@ -224,7 +224,7 @@ It can be added to your umbrella chart.yaml by the following snippet
 dependencies:
   - name: remoting-agent
     repository: https://eclipse-tractusx.github.io/charts/dev
-    version: 1.11.16-SNAPSHOT
+    version: 1.12.17-SNAPSHOT
     alias: my-remoting-agent
 ```
 

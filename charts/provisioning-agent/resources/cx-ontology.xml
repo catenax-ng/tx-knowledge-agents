@@ -25,7 +25,10 @@
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:json="https://json-schema.org/draft/2020-12/schema#" 
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="https://w3id.org/catenax/ontology/"/>
-    
+    <rdf:Description rdf:about="https://json-schema.org/draft/2020-12/schema#Object">
+      <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Datatype"/>
+    </rdf:Description>
 </rdf:RDF>
