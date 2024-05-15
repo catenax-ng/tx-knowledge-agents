@@ -27,6 +27,7 @@ This folder contains ready-made charts for the following optional features/refer
 - [Conforming Agent](conforming-agent) 
 - [Provisioning Agent](provisioning-agent) 
 - [Remoting Agent](remoting-agent)
+- [Matchmaking Agent](matchmaking-agent)
 
 ## Chart Linting
 

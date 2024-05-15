@@ -1,5 +1,5 @@
 ---
-# Copyright (c) 2022,2023 Contributors to the Eclipse Foundation
+# Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -28,7 +28,7 @@ home: https://github.com/eclipse-tractusx/knowledge-agents/
 sources:
   - https://github.com/eclipse-tractusx/knowledge-agents/tree/main/remoting
 type: application
-appVersion: "1.11.16-SNAPSHOT"
-version: 1.11.16-SNAPSHOT
+appVersion: "1.12.19-SNAPSHOT"
+version: 1.12.19-SNAPSHOT
 maintainers:
   - name: 'Tractus-X Knowledge Agents Team'

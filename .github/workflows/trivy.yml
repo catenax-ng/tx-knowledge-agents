@@ -85,6 +85,7 @@ jobs:
           - provisioning-agent
           - remoting-agent
           - conforming-agent
+          - matchmaking-agent
     steps:
 
       # Determine the right target docker repo

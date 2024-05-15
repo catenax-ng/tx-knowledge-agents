@@ -1,4 +1,4 @@
-// Copyright (c) 2022,2023 Contributors to the Eclipse Foundation
+// Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
 //
 // See the NOTICE file(s) distributed with this work for additional
 // information regarding copyright ownership.
@@ -64,6 +64,7 @@ public class RemotingSailConfig extends AbstractSailImplConfig {
     public static final String CORRELATION_INPUT_ATTRIBUTE = "correlationInput";
     public static final String OUTPUT_PROPERTY_ATTRIBUTE = "outputProperty";
     public static final String ARGUMENT_ATTRIBUTE = "argumentName";
+    public static final String STRIP_ATTRIBUTE = "strip";
     public static final String MANDATORY_ATTRIBUTE = "mandatory";
     public static final String DEFAULT_ATTRIBUTE = "default";
     public static final String GROUP_ATTRIBUTE = "formsBatchGroup";
@@ -91,6 +92,7 @@ public class RemotingSailConfig extends AbstractSailImplConfig {
     protected IRI outputPredicate = vf.createIRI(CONFIG_NAMESPACE, OUTPUT_ATTRIBUTE);
     protected IRI resultPredicate = vf.createIRI(CONFIG_NAMESPACE, RESULT_ATTRIBUTE);
     protected IRI argumentNamePredicate = vf.createIRI(CONFIG_NAMESPACE, ARGUMENT_ATTRIBUTE);
+    protected IRI stripPredicate = vf.createIRI(CONFIG_NAMESPACE, STRIP_ATTRIBUTE);
     protected IRI mandatoryPredicate = vf.createIRI(CONFIG_NAMESPACE, MANDATORY_ATTRIBUTE);
     protected IRI defaultPredicate = vf.createIRI(CONFIG_NAMESPACE, DEFAULT_ATTRIBUTE);
 
@@ -240,6 +242,9 @@ public class RemotingSailConfig extends AbstractSailImplConfig {
                 model.add(argumentNode, mandatoryPredicate, vf.createLiteral(arg.getValue().mandatory));
                 model.add(argumentNode, priorityPredicate, vf.createLiteral(arg.getValue().priority));
                 model.add(argumentNode, groupPredicate, vf.createLiteral(arg.getValue().formsBatchGroup));
+                if (arg.getValue().getStrip() != null) {
+                    model.add(argumentNode, stripPredicate, vf.createLiteral(arg.getValue().getStrip()));
+                }
                 model.add(argumentNode, defaultPredicate, Invocation.convertOutputToValue(arg.getValue().defaultValue, vf, "", "https://json-schema.org/draft/2020-12/schema#Object"));
             }
             IRI resultNode = vf.createIRI(func.getValue().resultName);
@@ -335,7 +340,11 @@ public class RemotingSailConfig extends AbstractSailImplConfig {
                         Models.objectLiteral(model.filter(argumentNode, groupPredicate, null))
                                 .ifPresent(group -> ac.formsBatchGroup = Boolean.parseBoolean(group.stringValue()));
                         Models.objectLiteral(model.filter(argumentNode, defaultPredicate, null))
-                                .ifPresent(def -> ac.defaultValue = Invocation.convertToObject(def, JsonNode.class));
+                                .ifPresent(def -> ac.defaultValue = Invocation.convertToObject(def, JsonNode.class, null));
+                        Models.objectLiteral(model.filter(argumentNode, stripPredicate, null))
+                                .ifPresent(strip -> ac.setStrip(strip.stringValue()));
+                        Models.objectIRI(model.filter(argumentNode, stripPredicate, null))
+                                .ifPresent(strip -> ac.setStrip(strip.stringValue()));
                     }
             );
             Models.objectIRI(model.filter(functionNode, resultPredicate, null))

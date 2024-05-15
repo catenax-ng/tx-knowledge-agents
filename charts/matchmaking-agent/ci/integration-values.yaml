@@ -1,6 +1,9 @@
 #
+#  Copyright (c) 2023, 2024 T-Systems International GmbH
+#  Copyright (c) 2023 ZF Friedrichshafen AG
+#  Copyright (c) 2023 Mercedes-Benz Tech Innovation GmbH
 #  Copyright (c) 2023 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
-#  Copyright (c) 2023 Contributors to the Eclipse Foundation
+#  Copyright (c) 2021, 2023 Contributors to the Eclipse Foundation
 #
 #  See the NOTICE file(s) distributed with this work for additional
 #  information regarding copyright ownership.
@@ -18,15 +21,19 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
----
-name: "Setup JDK 17"
-description: "Setup JDK 17"
-runs:
-  using: "composite"
-  steps:
-    - name: Setup JDK 17
-      uses: actions/setup-java@v3.11.0
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: 'maven'
+# image:
+#  registry: ghcr.io/catenax-ng/
+#  repository: tx-knowledge-agents/matchmaking-agent
+#  tag: 1.12.19-SNAPSHOT
+
+participant:
+  id: "BPNL0000000DUMMY"
+
+controlplane:
+  endpoints:
+    management:
+      authKey: "bla"
+
+agent:
+  default:
+    - dataspace.ttl

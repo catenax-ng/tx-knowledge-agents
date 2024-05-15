@@ -1,4 +1,4 @@
-# Copyright (c) 2022,2023 Contributors to the Eclipse Foundation
+# Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -19,7 +19,7 @@
 # Build Container: Fixes diverse vulnerabilities in guava <32, netty, jetty, spring-framework <5.3.28 and spring-web (all 5 versions - need to exclude a deprecated package from the jar)
 ##
 
-FROM eclipse-temurin:21-jdk-alpine AS build
+FROM eclipse-temurin:22_36-jdk-alpine AS build
 
 COPY target/original-remoting-agent-*.jar /opt/lib/
 #COPY target/lib/guava-*.jar /opt/lib/
@@ -66,7 +66,7 @@ COPY resources/web/callback.xml /tmp/rdf4j-server/WEB-INF/callback.xml
 # Target Container: Use a valid base image
 ##
 
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:22_36-jre-alpine
 
 ARG APP_USER=tomcat
 ARG APP_UID=10001

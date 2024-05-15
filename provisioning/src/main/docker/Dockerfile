@@ -1,4 +1,4 @@
-# Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
+# Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -25,7 +25,7 @@ FROM ontop/ontop:5.1.2 as blueprint
 # Build Container: Fixes diverse vulnerabilities in guava <32, tomcat, spring-boot 2.7<13, spring-framework <5.3.28 and spring-web (all 5 versions - need to exclude a deprecated package from the jar)
 ##
 
-FROM eclipse-temurin:21-jdk AS build
+FROM eclipse-temurin:11-jdk AS build
 
 # run with docker --build-arg jdbcDrivers=path_to_my_driver to establish a different driver
 ARG jdbcDrivers="https://repo1.maven.org/maven2/com/h2database/h2/2.2.220/h2-2.2.220.jar https://download.dremio.com/jdbc-driver/dremio-jdbc-driver-LATEST.jar https://repo1.maven.org/maven2/org/apache/calcite/avatica/avatica/1.22.0/avatica-1.22.0.jar"
@@ -56,7 +56,7 @@ RUN  if [ "${HTTP_PROXY}" != ""  ]; then \
 # Target Container: Use a valid base image
 ##
 
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:11-jre-alpine
 
 ARG APP_USER=ontop
 ARG APP_UID=10001

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
+# Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -122,7 +122,7 @@ for ENDPOINT in $ONTOP_PORT ; do  # NOTE: do not double-quote $services here.
   else 
     echo "Invoking intermediate process";
     java $TOOL -cp ./lib/*:./jdbc/* -Dlogback.configurationFile="/opt/ontop/log/logback.xml" -Dlogging.config="/opt/ontop/log/logback.xml" \
-      it.unibz.inf.ontop.cli.Ontop endpoint ${ONTOLOGY_FILE} ${MAPPING_FILE} \
+      it.unibz.inf.ontop.cli.Ontop endpoint ${ONTOLOGY} ${MAPPING} \
       ${PROPERTIES} ${PORTAL} ${DEV} ${ENDPOINT} ${CORS} ${LAZY}&
   fi
 done

@@ -1,5 +1,5 @@
 <!--
- * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -111,7 +111,7 @@ mvn package
 ```
 
 This will generate
-- a [pluging jar](target/provisioning-agent-1.11.16-SNAPSHOT.jar) which maybe dropped into an Ontop server (into the lib folder)
+- a [pluging jar](target/provisioning-agent-1.12.19-SNAPSHOT.jar) which maybe dropped into an Ontop server (into the lib folder)
 
 ### Containerizing (Provisioning Agent)
 
@@ -124,7 +124,7 @@ mvn install -Pwith-docker-image
 or invoke the following docker command after a successful package run
 
 ```console
-docker build -t tractusx/provisioning-agent:1.11.16-SNAPSHOT -f src/main/docker/Dockerfile .
+docker build -t tractusx/provisioning-agent:1.12.19-SNAPSHOT -f src/main/docker/Dockerfile .
 ```
 
 The image contains
@@ -144,7 +144,7 @@ docker run -p 8080:8080 \
   -v $(pwd)/resources/university-role1.obda:/input/mapping.obda \
   -v $(pwd)/resources/university-role1.properties:/input/settings.properties \
   -v $(pwd)/resources/university.sql:/tmp/university.sql \
-  tractusx/provisioning-agent:1.11.16-SNAPSHOT
+  tractusx/provisioning-agent:1.12.19-SNAPSHOT
 ````
 
 Afterwards, you should be able to access the [local SparQL endpoint](http://localhost:8080/) via
@@ -192,7 +192,7 @@ docker run -p 8080:8080 -p 8082:8082 \
   -e ONTOP_MAPPING_FILE="/input/role1.obda /input/role2.obda" \
   -e ONTOP_PROPERTIES_FILE="/input/role1.properties /input/role2.properties" \
   -e ONTOP_DEV_MODE="false false" \
-  tractusx/provisioning-agent:1.11.16-SNAPSHOT
+  tractusx/provisioning-agent:1.12.19-SNAPSHOT
 ````
 
 Accessing entities spanning two schemas using the first role/endpoint delivers a greater count
@@ -278,7 +278,7 @@ Eclipse Tractus-X product(s) installed within the image:
 
 **Used base image**
 
-- [eclipse-temurin:21-jre-alpine](https://github.com/adoptium/containers)
+- [eclipse-temurin:11-jre-alpine](https://github.com/adoptium/containers)
 - Official Eclipse Temurin DockerHub page: https://hub.docker.com/_/eclipse-temurin
 - Eclipse Temurin Project: https://projects.eclipse.org/projects/adoptium.temurin
 - Additional information about the Eclipse Temurin images: https://github.com/docker-library/repo-info/tree/master/repos/eclipse-temurin
@@ -297,7 +297,7 @@ It can be added to your umbrella chart.yaml by the following snippet
 dependencies:
   - name: provisioning-agent
     repository: https://eclipse-tractusx.github.io/charts/dev
-    version: 1.11.16-SNAPSHOT
+    version: 1.12.19-SNAPSHOT
     alias: my-provider-agent
 ```
 

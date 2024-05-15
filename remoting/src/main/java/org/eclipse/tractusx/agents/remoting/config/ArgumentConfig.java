@@ -1,4 +1,4 @@
-// Copyright (c) 2022,2023 Contributors to the Eclipse Foundation
+// Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
 //
 // See the NOTICE file(s) distributed with this work for additional
 // information regarding copyright ownership.
@@ -30,6 +30,11 @@ public class ArgumentConfig {
      * whether it is mandatory
      */
     protected boolean mandatory = true;
+
+    /**
+     * strip everything before the last appearance of that string
+     */
+    protected String strip = null;
 
     /**
      * an optional default value
@@ -101,6 +106,25 @@ public class ArgumentConfig {
     }
 
     /**
+     * strip string
+     *
+     * @return current strip string
+     */
+    public String getStrip() {
+        return strip;
+    }
+
+    /**
+     * sets the strip string
+     *
+     * @param strip a string to strip after
+     */
+    public void setStrip(String strip) {
+        this.strip = strip;
+    }
+
+
+    /**
      * validate the argument
      *
      * @param context validation context
@@ -114,7 +138,7 @@ public class ArgumentConfig {
 
     @Override
     public String toString() {
-        return super.toString() + "/argument(" + String.valueOf(mandatory) + ")";
+        return super.toString() + "/argument(" + mandatory + ")";
     }
 
 }

@@ -1,6 +1,6 @@
 ---
 #
-#  Copyright (c) 2021, 2023 Contributors to the Eclipse Foundation
+#  Copyright (c) 2021,2024 Contributors to the Eclipse Foundation
 #
 #  See the NOTICE file(s) distributed with this work for additional
 #  information regarding copyright ownership.
@@ -42,10 +42,16 @@ jobs:
   verify-formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.5.2
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           fetch-depth: 0
-      - uses: ./.github/actions/setup-java
+      # Set-Up
+      - name: Setup JDK 17
+        uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
       - name: Verify proper formatting
         run: ./mvnw spotless:check
 
@@ -61,11 +67,18 @@ jobs:
       fail-fast: false
       matrix:
         variant: [{dir: remoting, name: remoting-agent},
-                  {dir: conforming, name: conforming-agent}]
+                  {dir: conforming, name: conforming-agent},
+                  {dir: matchmaking, name: matchmaking-agent}]
     steps:
       # Set-Up
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: ./.github/actions/setup-java
+      # Set-Up
+      - name: Setup JDK 17
+        uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
       # Build
       - name: Build ${{ matrix.variant.name }}
         run: |-
@@ -106,9 +119,17 @@ jobs:
       matrix:
         variant: [{dir: provisioning, name: provisioning-agent}]
     steps:
-      # Set-Up
+      # Check-Out
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: ./.github/actions/setup-java
+
+      # Set-Up
+      - name: Setup JDK 17
+        uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+      
       # Build
       - name: Build ${{ matrix.variant.name }}
         run: |-
@@ -118,7 +139,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Tar gzip files for veracode upload
         run: |-
-          tar --exclude='spring-web-5.3.28.jar' -czvf ${{ matrix.variant.dir }}/target/${{ matrix.variant.name }}.tar.gz ${{ matrix.variant.dir }}/target/lib/*.jar ${{ matrix.variant.dir }}/target/${{ matrix.variant.name }}-*.jar
+          tar --exclude='spring-web-5.3.31.jar' -czvf ${{ matrix.variant.dir }}/target/${{ matrix.variant.name }}.tar.gz ${{ matrix.variant.dir }}/target/lib/*.jar ${{ matrix.variant.dir }}/target/${{ matrix.variant.name }}-*.jar
       - name: Veracode Upload And Scan
         uses: veracode/veracode-uploadandscan-action@c3c0b78bddb42d5f6b10d70562f692215a410d7b #v1.0
         if: |

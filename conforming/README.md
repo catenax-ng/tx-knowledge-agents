@@ -1,5 +1,5 @@
 <!--
- * Copyright (c) 2022,2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -54,15 +54,15 @@ mvn package
 
 This will generate
 
-- a [plugin jar](target/original-conforming-agent-1.11.16-SNAPSHOT.jar) containing all necessary components to be dropped into a Jakarta-Compatible Web Server.
-- a [standalone jar](target/conforming-agent-1.11.16-SNAPSHOT.jar) including the Jakarta-Reference Implementation (Glassfish).
+- a [plugin jar](target/original-conforming-agent-1.12.19-SNAPSHOT.jar) containing all necessary components to be dropped into a Jakarta-Compatible Web Server.
+- a [standalone jar](target/conforming-agent-1.12.19-SNAPSHOT.jar) including the Jakarta-Reference Implementation (Glassfish).
 
 ### Run Locally
 
-The [standalone jar](target/conforming-agent-1.11.16-SNAPSHOT.jar) may be started as follows
+The [standalone jar](target/conforming-agent-1.12.19-SNAPSHOT.jar) may be started as follows
 
 ```console
-java -cp target/conforming-agent-1.11.16-SNAPSHOT.jar org.eclipse.tractusx.agents.conforming.Bootstrap"
+java -cp target/conforming-agent-1.12.19-SNAPSHOT.jar org.eclipse.tractusx.agents.conforming.Bootstrap"
 ```
 
 ### Containerizing
@@ -76,7 +76,7 @@ mvn install -Pwith-docker-image
 or invoke the following docker command after a successful package run
 
 ```console
-docker build -t tractusx/conforming-agent:1.11.16-SNAPSHOT -f src/main/docker/Dockerfile .
+docker build -t tractusx/conforming-agent:1.12.19-SNAPSHOT -f src/main/docker/Dockerfile .
 ```
 
 This will create a docker image based on a minimal java environment for running the Glassfish-based standalone jar.
@@ -85,7 +85,7 @@ To run the docker image, you could invoke this command
 
 ```console
 docker run -p 8080:8080 \
-  tractusx/conforming-agent:1.11.16-SNAPSHOT
+  tractusx/conforming-agent:1.12.19-SNAPSHOT
 ````
 
 Afterwards, you should be able to access the [local SparQL endpoint](http://localhost:8080/) via
@@ -143,7 +143,7 @@ It can be added to your umbrella chart.yaml by the following snippet
 dependencies:
   - name: conforming-agent
     repository: https://eclipse-tractusx.github.io/charts/dev
-    version: 1.11.16-SNAPSHOT
+    version: 1.12.19-SNAPSHOT
     alias: my-conforming-agent
 ```
 

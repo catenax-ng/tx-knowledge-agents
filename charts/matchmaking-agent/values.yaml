@@ -1,0 +1,335 @@
+---
+# Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0.
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Matchmaking Agent Deployment Values
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Specifies how many replicas of a deployed pod shall be created during the deployment
+# Note: If horizontal pod autoscaling is enabled this setting has no effect
+replicaCount: 1
+
+image:
+  # -- target registry
+  registry: docker.io/
+  # -- Which derivate of agent to use
+  repository: tractusx/matchmaking-agent
+  # -- Overrides the image tag whose default is the chart appVersion
+  tag: ""
+  # -- Overrides the image digest
+  digest: ""
+  ## Specify an imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
+  pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ## Example:
+  ## pullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  pullSecrets: []
+  ## Set to true if you would like to see extra information on logs
+  ##
+
+# -- Overrides the charts name
+nameOverride: ""
+
+# -- Overrides the releases full name
+fullnameOverride: ""
+
+# -- Additional custom Labels to add
+customLabels: {}
+
+serviceAccount:
+  # -- Specifies whether a [service account](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) should be created per release
+  create: true
+  # -- [Annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) to add to the service account
+  annotations: {}
+  # -- The name of the service account to use. If not set and create is true, a name is generated using the release's fullname template
+  name: ""
+
+# -- Whether to [automount kubernetes API credentials](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#use-the-default-service-account-to-access-the-api-server) into the pod
+automountServiceAccountToken: false
+
+# -- [Annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) added to deployed [pods](https://kubernetes.io/docs/concepts/workloads/pods/)
+podAnnotations: {}
+# Uncomment this and remove parenthesis if you want to enable apparmor
+# container.apparmor.security.beta.kubernetes.io/matchmaking-agent: runtime/default
+
+# The [pod security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod) defines privilege and access control settings for a Pod within the deployment
+podSecurityContext:
+  seccompProfile:
+    # -- Restrict a Container's Syscalls with seccomp
+    type: RuntimeDefault
+  # -- Runs all processes within a pod with a special uid
+  runAsUser: 10001
+  # -- Processes within a pod will belong to this guid
+  runAsGroup: 30000
+  # -- The owner for volumes and any files created within volumes will belong to this guid
+  fsGroup: 30000
+
+# The [container security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container) defines privilege and access control settings for a Container within a pod
+securityContext:
+  capabilities:
+    # -- Specifies which capabilities to drop to reduce syscall attack surface
+    drop:
+      - ALL
+    # -- Specifies which capabilities to add to issue specialized syscalls
+    add:
+      - NET_BIND_SERVICE
+  # -- Whether the root filesystem is mounted in read-only mode
+  readOnlyRootFilesystem: true
+  # -- Controls [Privilege Escalation](https://kubernetes.io/docs/concepts/security/pod-security-policy/#privilege-escalation) enabling setuid binaries changing the effective user ID
+  allowPrivilegeEscalation: false
+  # -- Requires the container to run without root privileges
+  runAsNonRoot: true
+  # -- The container's process will run with the specified uid
+  runAsUser: 10001
+  # -- Processes within a pod will belong to this guid
+  runAsGroup: 30000
+
+livenessProbe:
+  # -- Whether to enable kubernetes [liveness-probe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
+  enabled: true
+  # -- Minimum consecutive failures for the probe to be considered failed after having succeeded
+  failureThreshold: 3
+  # -- Number of seconds each period lasts.
+  periodSeconds: 60
+  # -- number of seconds until a timeout is assumed
+  timeoutSeconds: 5
+
+readinessProbe:
+  # -- Whether to enable kubernetes readiness-probes
+  enabled: true
+  # -- Minimum consecutive failures for the probe to be considered failed after having succeeded
+  failureThreshold: 3
+  # -- Number of seconds each period lasts.
+  periodSeconds: 300
+  # -- number of seconds until a timeout is assumed
+  timeoutSeconds: 5
+
+startupProbe:
+  # -- Whether to enable kubernetes startup-probes
+  enabled: true
+  # -- Minimum consecutive failures for the probe to be considered failed after having succeeded
+  failureThreshold: 18
+  # -- Number of seconds after the container has started before liveness probes are initiated.
+  initialDelaySeconds: 60
+  # -- Number of seconds each period lasts.
+  periodSeconds: 30
+  # -- number of seconds until a timeout is assumed
+  timeoutSeconds: 5
+
+participant:
+  # -- BPN Number
+  id: ""
+
+# -- Name of the connector deployment
+connector: ""
+
+# -- References to the control plane deployment
+controlplane:
+  endpoints:
+    # -- data management api, used by internal users, can be added to an ingress and must not be internet facing
+    management:
+      # -- port for incoming api calls
+      port: 8081
+      # -- path for incoming api calls
+      path: /management
+      # -- authentication key, must be attached to each 'X-Api-Key' request header
+      authKey: ""
+    # -- control api, used for internal control calls. can be added to the internal ingress, but should probably not
+    control:
+      # -- port for incoming api calls
+      port: 8083
+      # -- path for incoming api calls
+      path: /control
+    # -- dsp api, used for inter connector communication and must be internet facing
+    protocol:
+      # -- port for incoming api calls
+      port: 8084
+      # -- path for incoming api calls
+      path: /api/v1/dsp
+  ingresses:
+    - enabled: false
+
+# -- A set of additional configuration files
+configs:
+  # -- An example of an empty graph in ttl syntax
+  dataspace.ttl: |
+    #################################################################
+    # Catena-X Agent Bootstrap Graph in TTL/RDF/OWL FORMAT
+    #################################################################
+    @prefix : <GraphAsset?local=Dataspace> .
+    @base <GraphAsset?local=Dataspace> .
+
+## Endpoints exposed by the matchmaking agent
+agent:
+  endpoints:
+    ## Default api exposing health checks etc
+    default:
+      # -- The network port, which the "default" api is going to be exposed by the container, pod and service
+      port: "8082"
+      # -- An auth object for default security
+      auth: {}
+      # -- The path mapping the "default" api is going to be exposed by
+      path: "/api"
+      # -- An optional regex path match (whose match groups could be used in an nginx-annotation of the ingress)
+      regex: /(.*)
+    ## Source api exposing EDC inject
+    internal:
+      # -- The network port, which the "source" api is going to be exposed by the container, pod and service
+      port: "8080"
+      # -- An auth object for default security
+      auth: {}
+      # -- The path mapping the "source" api is going to be exposed by
+      path: "/agentsource"
+      # -- An optional regex path match (whose match groups could be used in an nginx-annotation of the ingress)
+      regex: /(.*)
+    ## Source api exposing EDC callback
+    callback:
+      # -- The network port, which the "callback" api is going to be exposed by the container, pod and service
+      port: "8087"
+      # -- An auth object for default security
+      auth: {}
+      # -- The path mapping the "callback" api is going to be exposed by
+      path: "/callback"
+      # -- An optional regex path match (whose match groups could be used in an nginx-annotation of the ingress)
+      regex: /(.*)
+    # -- A list of local or remote graph descriptions to build the default meta-graph/federated data catalogue
+  default:
+    - dataspace.ttl
+    - https://w3id.org/catenax/ontology.ttl
+  # -- The synchronization interval in ms to update the federated data catalogue
+  synchronization: -1
+  # -- A map of partner ids to remote connector IDS URLs to synchronize with
+  connectors: {}
+  # -- Names the visible contract under which new skills are published (if not otherwise specified)
+  skillcontract: Contract?partner=Skill
+  # -- Names the visible contract under which new graphs are published (if not otherwise specified)
+  graphcontract: Contract?partner=Graph
+  # -- Sets the maximal batch size when delegating to agents and services
+  maxbatchsize: '9223372036854775807'
+  # -- A set of configs for regulating outgoing service calls
+  services:
+    # -- A regular expression which outgoing service URLs must match (unless overwritten by a specific asset property)
+    allow: '(edcs?://.*)|(https://query\\.wikidata\\.org/sparql)'
+    # -- A regular expression which outgoing service URLs must not match (unless overwritten by a specific asset property)
+    deny: 'http://.*'
+    # -- A set of configs for regulating outgoing service calls when providing an asset (when no specific asset property is given)
+    asset:
+      # -- A regular expression which outgoing service URLs must match (unless overwritten by a specific asset property)
+      allow: '(edcs?://.*)'
+      # -- A regular expression which outgoing service URLs must not match (unless overwritten by a specific asset property)
+      deny: 'https?://.*'
+
+service:
+  # -- [Service type](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types) to expose the running application on a set of Pods as a network service.
+  type: ClusterIP
+
+## Ingress declaration to expose the network service.
+ingresses:
+  ## Agent-Plane Facing Ingress
+  - enabled: false
+    # -- The hostname to be used to precisely map incoming traffic onto the underlying network service
+    hostname: "matchmaking-agent.local"
+    # -- Additional ingress annotations to add, for example when implementing more complex routings you may set { nginx.ingress.kubernetes.io/rewrite-target: /$1, nginx.ingress.kubernetes.io/use-regex: "true" }
+    annotations:
+      # Example if you want more complex routings in interplay with the endpoints regex property
+      # nginx.ingress.kubernetes.io/rewrite-target: /$1
+      # nginx.ingress.kubernetes.io/use-regex: "true"
+    # -- Optional prefix that will be prepended to the paths of the endpoints
+    prefix: ""
+    # -- Agent endpoints exposed by this ingress resource
+    endpoints:
+      - default
+      - source
+      - callback
+    # -- Defines the [ingress class](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class)  to use
+    className: ""
+    # -- TLS [tls class](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) applied to the ingress resource
+    tls:
+      # -- Enables TLS on the ingress resource
+      enabled: false
+      # -- If present overwrites the default secret name
+      secretName: ""
+    ## Adds [cert-manager](https://cert-manager.io/docs/) annotations to the ingress resource
+    certManager:
+      # -- If preset enables certificate generation via cert-manager namespace scoped issuer
+      issuer: ""
+      # -- If preset enables certificate generation via cert-manager cluster-wide issuer
+      clusterIssuer: ""
+
+# -- [Resource management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) applied to the deployed pod
+# We recommend 25% of a cpu, 512MB per server and 256MB per endpoint
+resources:
+  requests:
+    cpu: 250m
+    memory: 768Mi
+  limits:
+    cpu: 250m
+    memory: 768Mi
+
+autoscaling:
+  # -- Enables [horizontal pod autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
+  enabled: false
+  # -- Minimal replicas if resource consumption falls below resource threshholds
+  minReplicas: 1
+  # -- Maximum replicas if resource consumption exceeds resource threshholds
+  maxReplicas: 100
+  # -- targetAverageUtilization of cpu provided to a pod
+  targetCPUUtilizationPercentage: 80
+  # -- targetAverageUtilization of memory provided to a pod
+  targetMemoryUtilizationPercentage: 80
+
+# -- [Node-Selector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) to constrain the Pod to nodes with specific labels.
+nodeSelector: {}
+
+# -- [Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) are applied to Pods to schedule onto nodes with matching taints.
+tolerations: []
+
+# -- [Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) constrains which nodes the Pod can be scheduled on based on node labels.
+affinity: {}
+
+# -- Container environment variables e.g. for configuring [JAVA_TOOL_OPTIONS](https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/envvars002.html)
+# Ex.:
+#   JAVA_TOOL_OPTIONS: >
+#     -Dhttp.proxyHost=proxy -Dhttp.proxyPort=80 -Dhttp.nonProxyHosts="localhost|127.*|[::1]" -Dhttps.proxyHost=proxy -Dhttps.proxyPort=443
+env: {}
+
+# -- [Kubernetes Secret Resource](https://kubernetes.io/docs/concepts/configuration/secret/) name to load environment variables from
+envSecretName:
+
+logging:
+  # -- Logback Xml
+  configuration: |-
+    <?xml version="1.0" encoding="UTF-8"?>
+    <configuration debug="false" scan="true" scanPeriod="30 seconds">
+      <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+          <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+      </appender>
+      <root>
+        <level value="FINEST"/>
+        <appender-ref ref="STDOUT" />
+      </root>
+    </configuration>

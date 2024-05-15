@@ -1,4 +1,4 @@
-// Copyright (c) 2022,2023 Contributors to the Eclipse Foundation
+// Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
 //
 // See the NOTICE file(s) distributed with this work for additional
 // information regarding copyright ownership.
@@ -545,17 +545,35 @@ public class QueryExecutor implements QueryModelVisitor<SailException>, BindingH
         throw new SailException(String.format("No support for %s", node));
     }
 
+    /**
+     * implements the actual preparation/binding and invocation/execution of triple based API calls
+     */
     @Override
     public void meet(StatementPattern statement) throws SailException {
-        Var predicate = statement.getPredicateVar();
-        Var object = statement.getObjectVar();
         if (bindings.isEmpty()) {
             bindings.add(new MapBindingSet());
         }
-        if (!predicate.hasValue() || !predicate.getValue().isIRI()) {
-            throw new SailException(String.format("No support for non-IRI predicate binding %s", predicate));
-        } else if ("http://www.w3.org/1999/02/22-rdf-syntax-ns#type".equals(predicate.getValue().stringValue())) {
-            if (!object.hasValue() || !object.getValue().isIRI()) {
+        Var predicate = statement.getPredicateVar();
+        if (!predicate.hasValue()) {
+            if (!bindings.get(0).hasBinding(predicate.getName())) {
+                throw new SailException(String.format("Predicate %s is not bound", predicate));
+            }
+            predicate = new Var(predicate.getName(), bindings.get(0).getValue(predicate.getName()));
+            checkConsistentBindings(predicate);
+        }
+        if (!predicate.getValue().isIRI()) {
+            throw new SailException(String.format("No support for non-IRI predicate %s", predicate));
+        }
+        if ("http://www.w3.org/1999/02/22-rdf-syntax-ns#type".equals(predicate.getValue().stringValue())) {
+            Var object = statement.getObjectVar();
+            if (!object.hasValue()) {
+                if (!bindings.get(0).hasBinding(object.getName())) {
+                    throw new SailException(String.format("Invocation type %s is not bound", object));
+                }
+                object = new Var(object.getName(), bindings.get(0).getValue(object.getName()));
+                checkConsistentBindings(object);
+            }
+            if (!object.getValue().isIRI()) {
                 throw new SailException(String.format("No support for non-IRI invocation type binding %s", object));
             }
             IRI objectIri = (IRI) object.getValue();
@@ -606,14 +624,26 @@ public class QueryExecutor implements QueryModelVisitor<SailException>, BindingH
             }
             Invocation invocation = invocations.get(subject.getValue());
             IRI argument = (IRI) predicate.getValue();
-            if (invocation.service.getResult().getOutputs().containsKey(argument.stringValue())) {
-                invocation.outputs.put(object, argument);
+            if (invocation.service.getResultName().equals(argument.stringValue()) || invocation.service.getResult().getOutputs().containsKey(argument.stringValue())) {
+                invocation.outputs.put(statement.getObjectVar(), argument);
             } else if (invocation.service.getArguments().containsKey(argument.stringValue())) {
-                invocation.inputs.put(argument.stringValue(), object);
+                invocation.inputs.put(argument.stringValue(), statement.getObjectVar());
             } else {
                 throw new SailException(String.format("Predicate %s is neither output nor input predicate for invocation %s", argument, subject));
             }
         }
+    }
+
+    /**
+     * check that all bindings coincide on the comparison object
+     */
+    private void checkConsistentBindings(final Var compareObject) {
+        bindings.forEach(binding -> {
+            Value val = binding.getValue(compareObject.getName());
+            if (!val.equals(compareObject.getValue())) {
+                throw new SailException(String.format("Having different invocation types %s is currently not supported", compareObject));
+            }
+        });
     }
 
     @Override
